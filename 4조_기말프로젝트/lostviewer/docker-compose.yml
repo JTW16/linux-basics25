@@ -1,0 +1,19 @@
+version: "3.8" #Docker Compose 파일의 버전
+
+services: #컨테이너로 실행할 서비스 목록을 정의하는 루트 섹션
+  lostfetcher: #첫 번째 서비스 이름
+    build:
+      context: ./lostfetcher #./lostfetcher 디렉토리에서 Dockerfile을 찾아 이미지를 빌드
+                             #context는 빌드할 때 사용할 파일들의 경로
+    volumes:
+      - ./html:/data #호스트의 ./html 폴더를 컨테이너 내부의 /data 경로에 연결
+    depends_on:
+      - webserver #서비스 간 의존성을 명시
+
+  webserver: #두 번째 서비스 이름
+    image: nginx:alpine #Nginx 이미지를 사용
+    volumes: 
+      - ./html:/usr/share/nginx/html #호스트의 ./html 폴더를 컨테이너 내 웹 서버 루트 디렉토리에 연결
+                                     #즉, 로컬에서 만든 웹 파일들을 nginx가 서빙할 수 있게 함
+    ports:
+      - "8080:80" #localhost:8080 으로 접속 시 Nginx 웹 페이지가 보임
